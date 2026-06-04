@@ -119,6 +119,37 @@ def editar_fuente(id_fuente, **kwargs):
     conn.commit()
     conn.close()
 
+def ejecutar_extraccion_completa():
+    """
+    Ejecuta todos los extractores configurados y guarda los datos en la BD.
+    Primero intenta usar extractores específicos; si no están disponibles,
+    usa el extractor genérico con las reglas de la tabla 'fuentes'.
+    """
+    from extractores.generico import extraer_fuente
+    
+    fuentes = obtener_fuentes_activas()
+    total_insertados = 0
+    
+    for fuente in fuentes:
+        try:
+            print(f"Extrayendo de: {fuente['nombre']} ({fuente['tipo']})")
+            df = extraer_fuente(
+                url=fuente['url'],
+                tipo=fuente['tipo'],
+                reglas_json=fuente['reglas_extraccion']
+            )
+            if not df.empty:
+                insertados = insertar_flujos(df)
+                total_insertados += insertados
+                print(f"  -> {insertados} registros insertados")
+            else:
+                print(f"  -> Sin datos (URL no accesible o sin datos nuevos)")
+        except Exception as e:
+            print(f"  -> Error: {e}")
+    
+    print(f"\nTotal de registros insertados: {total_insertados}")
+    return total_insertados
+
 def eliminar_fuente(id_fuente):
     """Elimina una fuente por su ID."""
     conn = get_connection()
