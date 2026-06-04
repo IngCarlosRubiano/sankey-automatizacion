@@ -41,7 +41,8 @@ def extraer_fuente(url, tipo, reglas_json):
         if tipo == 'csv':
             df = pd.read_csv(url, encoding='utf-8')
         elif tipo == 'excel':
-            df = pd.read_excel(url)
+            hoja = reglas.get('hoja', 0)
+            df = pd.read_excel(url, sheet_name=hoja)
     
     # Aplicar filtro si existe
     if 'filtro' in reglas:
