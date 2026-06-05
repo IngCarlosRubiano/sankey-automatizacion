@@ -10,3 +10,5 @@ dist/
 build/
 *.spec
 .env
+SankeyColombia.zip
+dist/
