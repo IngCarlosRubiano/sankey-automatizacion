@@ -238,3 +238,12 @@ elif opcion == "⚙️ Administrar Fuentes":
 st.sidebar.markdown("---")
 st.sidebar.caption(f"Versión 1.0 | {datetime.now().strftime('%Y-%m-%d')}")
 st.sidebar.caption("Fuentes: UPME, XM, ANH")
+
+# ------------------------------------------------------------
+# ARRANQUE AUTOMÁTICO DE STREAMLIT CUANDO SE EJECUTA COMO .EXE
+# ------------------------------------------------------------
+if __name__ == "__main__":
+    import sys
+    from streamlit.web import cli as stcli
+    sys.argv = ["streamlit", "run", __file__, "--global.developmentMode=false"]
+    sys.exit(stcli.main())

@@ -54,4 +54,26 @@ Ve a "Extraer Datos" y haz clic en "Extraer ahora". Si las URLs de las fuentes n
 Error al cargar una fuente
 Revisa que las reglas JSON sean válidas y que las columnas existan en el archivo fuente.
 
+## Formato del archivo CSV para actualización de datos
 
+El archivo CSV debe tener exactamente estas cinco columnas en el siguiente orden:
+
+origen,destino,valor,periodo,fuente
+
+
+| Columna | Descripción | Ejemplo |
+|---------|-------------|---------|
+| origen | Nodo de origen del flujo energético | Hidroeléctrica |
+| destino | Nodo de destino del flujo energético | Electricidad SIN |
+| valor | Magnitud del flujo en TJ (Terajulios) | 703800 |
+| periodo | Año del dato (YYYY) | 2024 |
+| fuente | Organismo que reporta el dato | XM |
+
+Reglas:
+1. El separador debe ser coma (,).
+2. La codificación debe ser UTF-8.
+3. No usar comillas en los nombres de nodos.
+4. Mantener consistencia en los nombres de nodos (ej: siempre "Hidroeléctrica", no "Hidro" en otra fila).
+5. Los valores numéricos sin separadores de miles ni símbolos.
+
+Puedes descargar una plantilla de ejemplo desde la sección "Extraer Datos" de la aplicación.

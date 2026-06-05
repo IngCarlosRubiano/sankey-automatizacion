@@ -87,6 +87,16 @@ if opcion == "📥 Extraer Datos":
     st.markdown("---")
     st.subheader("📤 Actualizar datos desde archivo CSV")
     st.caption("Sube un archivo CSV con columnas: origen, destino, valor, periodo, fuente")
+    
+    # Plantilla descargable
+    plantilla_csv = "origen,destino,valor,periodo,fuente\nHidroeléctrica,Electricidad SIN,703800,2024,XM\nSolar FV,Electricidad SIN,42804,2024,XM"
+    st.download_button(
+        label="📥 Descargar plantilla CSV de ejemplo",
+        data=plantilla_csv.encode('utf-8'),
+        file_name="plantilla_flujos.csv",
+        mime="text/csv"
+    )
+    
     archivo_subido = st.file_uploader("Selecciona un archivo CSV", type="csv")
     if archivo_subido is not None:
         df_nuevo = pd.read_csv(archivo_subido, encoding='utf-8')
