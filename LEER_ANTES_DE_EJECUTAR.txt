@@ -1,0 +1,29 @@
+INSTRUCCIONES PARA EJECUTAR LA APLICACIÓN
+==========================================
+
+OPCIÓN A (recomendada): Script automático
+  1. Extrae todos los archivos del ZIP en una carpeta.
+  2. Haz doble clic en "instalar_y_ejecutar.bat".
+  3. El script instalará todo automáticamente y abrirá la aplicación en tu navegador.
+
+OPCIÓN B: Ejecutable (.exe)
+  1. Haz doble clic en "SankeyColombia.exe".
+  2. La aplicación se abrirá en tu navegador.
+
+OPCIÓN C: Manual (si tienes Python)
+  1. Abre una terminal en la carpeta del proyecto.
+  2. Ejecuta: python -m venv venv
+  3. Activa el entorno: venv\Scripts\activate
+  4. Instala dependencias: pip install -r requirements.txt
+  5. Inicializa: python inicializar_fuentes.py
+  6. Ejecuta: streamlit run app.py
+
+REQUISITOS MÍNIMOS
+  - Windows 10 o superior
+  - Python 3.10+ (solo para Opción C)
+  - 500 MB de espacio libre
+  - Conexión a internet (para extraer datos de fuentes oficiales)
+
+CONTACTO
+  Carlos Alberto Rubiano Olaya
+  Universidad Distrital Francisco José de Caldas

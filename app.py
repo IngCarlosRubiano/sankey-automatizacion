@@ -28,6 +28,19 @@ st.markdown("---")
 # Inicializar BD si no existe
 crear_bd()
 
+# Si no hay datos, cargar respaldo automáticamente
+import pandas as pd
+import os
+from db import obtener_periodos, insertar_flujos
+
+periodos = obtener_periodos()
+if not periodos:
+    respaldo_path = os.path.join(os.path.dirname(__file__), 'datos', 'flujos_respaldo.csv')
+    if os.path.exists(respaldo_path):
+        df_respaldo = pd.read_csv(respaldo_path, encoding='utf-8')
+        insertar_flujos(df_respaldo)
+        print("Datos de respaldo cargados automáticamente.")
+
 # ------------------------------------------------------------
 # BARRA LATERAL - NAVEGACIÓN
 # ------------------------------------------------------------
@@ -71,6 +84,15 @@ if opcion == "📥 Extraer Datos":
     else:
         st.warning("No hay fuentes configuradas. Ve a 'Administrar Fuentes' para agregar.")
 
+    st.markdown("---")
+    st.subheader("📤 Actualizar datos desde archivo CSV")
+    st.caption("Sube un archivo CSV con columnas: origen, destino, valor, periodo, fuente")
+    archivo_subido = st.file_uploader("Selecciona un archivo CSV", type="csv")
+    if archivo_subido is not None:
+        df_nuevo = pd.read_csv(archivo_subido, encoding='utf-8')
+        insertados = insertar_flujos(df_nuevo)
+        st.success(f"✅ {insertados} registros añadidos a la base de datos.")
+        st.caption("Ve a 'Generar Gráfico' para visualizar el nuevo período.")
 # ------------------------------------------------------------
 # SECCIÓN 2: GENERAR GRÁFICO
 # ------------------------------------------------------------

@@ -1,45 +1,34 @@
 import pandas as pd
 import requests
 from datetime import datetime
-from extractores.base import ExtractorBase
 
-class ExtractorANH(ExtractorBase):
-    """Extractor para estadísticas de producción de hidrocarburos de la ANH."""
-    
-    def __init__(self):
-        super().__init__(
-            nombre="ANH Producción Hidrocarburos",
-            url="https://www.anh.gov.co/estadisticas-del-sector",
-            tipo="excel",
-            reglas={
-                "col_origen": "Tipo_Hidrocarburo",
-                "col_destino": "Uso",
-                "col_valor": "Produccion",
-                "factor_conversion": 1.0,
-                "nombre_fuente": "ANH"
-            }
-        )
-    
-    def extraer(self) -> pd.DataFrame:
-        """
-        Extrae datos de producción de petróleo y gas desde la ANH.
-        Por ahora devuelve un DataFrame vacío hasta que tengamos la URL exacta del Excel.
-        """
-        try:
-            # Intentar descargar Excel de estadísticas (la URL exacta puede variar)
-            url_excel = "https://www.anh.gov.co/.../estadisticas_produccion.xlsx"
-            response = requests.get(url_excel)
-            if response.status_code == 200:
-                df = pd.read_excel(response.content)
-                df_out = pd.DataFrame()
-                df_out['origen'] = 'Producción Nacional'
-                df_out['destino'] = df[self.reglas['col_destino']]
-                df_out['valor'] = df[self.reglas['col_valor']] * self.reglas['factor_conversion']
-                df_out['periodo'] = datetime.now().strftime('%Y')
-                df_out['fuente'] = self.reglas['nombre_fuente']
-                return df_out[['origen', 'destino', 'valor', 'periodo', 'fuente']]
-            else:
-                return pd.DataFrame()
-        except Exception as e:
-            print(f"Error al extraer de ANH: {e}")
+def extraer_anh():
+    """
+    Extrae producción de hidrocarburos desde la ANH.
+    URL: https://www.anh.gov.co/estadisticas-del-sector
+    """
+    try:
+        # URL del Excel de producción (ajustar según portal)
+        url = "https://www.anh.gov.co/estadisticas-del-sector/Produccion/Produccion_mensual.xlsx"
+        response = requests.get(url, timeout=30)
+        if response.status_code == 200:
+            # Guardar copia local
+            with open('datos/produccion_anh.xlsx', 'wb') as f:
+                f.write(response.content)
+            
+            df = pd.read_excel('datos/produccion_anh.xlsx', sheet_name='Produccion')
+            
+            df_out = pd.DataFrame()
+            df_out['origen'] = 'Petróleo crudo'
+            df_out['destino'] = 'Exportación / Refinación'
+            # Valor en barriles, convertir a TJ aprox (1 barril ~ 6.12 GJ = 0.00612 TJ)
+            df_out['valor'] = pd.to_numeric(df['Produccion_barriles'], errors='coerce') * 0.00612
+            df_out['periodo'] = datetime.now().strftime('%Y')
+            df_out['fuente'] = 'ANH'
+            return df_out.dropna()
+        else:
+            print(f"Error ANH: status {response.status_code}")
             return pd.DataFrame()
+    except Exception as e:
+        print(f"Error extrayendo ANH: {e}")
+        return pd.DataFrame()

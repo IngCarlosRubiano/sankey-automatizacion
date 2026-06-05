@@ -120,35 +120,39 @@ def editar_fuente(id_fuente, **kwargs):
     conn.close()
 
 def ejecutar_extraccion_completa():
-    """
-    Ejecuta todos los extractores configurados y guarda los datos en la BD.
-    Primero intenta usar extractores específicos; si no están disponibles,
-    usa el extractor genérico con las reglas de la tabla 'fuentes'.
-    """
+    # Primero intentar extractores específicos (más robustos)
     from extractores.generico import extraer_fuente
+    from extractores.xm import extraer_xm
+    from extractores.upme import extraer_upme
+    from extractores.anh import extraer_anh
     
-    fuentes = obtener_fuentes_activas()
-    total_insertados = 0
-    
-    for fuente in fuentes:
+    total = 0
+    for extractor, nombre in [(extraer_xm, 'XM'), (extraer_upme, 'UPME'), (extraer_anh, 'ANH')]:
         try:
-            print(f"Extrayendo de: {fuente['nombre']} ({fuente['tipo']})")
-            df = extraer_fuente(
-                url=fuente['url'],
-                tipo=fuente['tipo'],
-                reglas_json=fuente['reglas_extraccion']
-            )
+            print(f"Extrayendo {nombre}...")
+            df = extractor()
             if not df.empty:
                 insertados = insertar_flujos(df)
-                total_insertados += insertados
+                total += insertados
                 print(f"  -> {insertados} registros insertados")
             else:
-                print(f"  -> Sin datos (URL no accesible o sin datos nuevos)")
+                print(f"  -> Sin datos")
         except Exception as e:
             print(f"  -> Error: {e}")
     
-    print(f"\nTotal de registros insertados: {total_insertados}")
-    return total_insertados
+    # Luego el extractor genérico para fuentes adicionales
+    fuentes = obtener_fuentes_activas()
+    for fuente in fuentes:
+        if fuente['nombre'] not in ['XM', 'UPME', 'ANH']:
+            try:
+                df = extraer_fuente(fuente['url'], fuente['tipo'], fuente['reglas_extraccion'])
+                if not df.empty:
+                    insertados = insertar_flujos(df)
+                    total += insertados
+            except Exception as e:
+                print(f"Error en {fuente['nombre']}: {e}")
+    
+    return total
 
 def eliminar_fuente(id_fuente):
     """Elimina una fuente por su ID."""

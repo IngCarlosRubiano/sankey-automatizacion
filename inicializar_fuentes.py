@@ -1,8 +1,7 @@
-"""Script para cargar las fuentes iniciales desde fuentes.json a la base de datos."""
+"""Script para inicializar la BD con fuentes y datos por defecto."""
 import json
-from db import crear_bd, agregar_fuente, obtener_fuentes_activas
+from db import crear_bd, agregar_fuente, obtener_fuentes_activas, ejecutar_extraccion_completa, obtener_periodos
 
-# Crear BD si no existe
 crear_bd()
 
 # Cargar fuentes desde JSON
@@ -18,10 +17,18 @@ for fuente in fuentes:
         reglas_extraccion=reglas_str,
         activo=fuente['activo']
     )
-    print(f"Fuente agregada: {fuente['nombre']}")
 
-# Verificar
-activas = obtener_fuentes_activas()
-print(f"\nFuentes activas en BD: {len(activas)}")
-for f in activas:
-    print(f"  - {f['nombre']} ({f['tipo']})")
+# Si no hay datos, ejecutar extracción inicial
+periodos = obtener_periodos()
+if not periodos:
+    print("No hay datos. Ejecutando extracción inicial...")
+    ejecutar_extraccion_completa()
+    # Si sigue sin datos (por URLs no accesibles), cargar datos de respaldo
+    periodos = obtener_periodos()
+    if not periodos:
+        print("Cargando datos de respaldo...")
+        import pandas as pd
+        from db import insertar_flujos
+        df = pd.read_csv('datos/flujos_respaldo.csv')
+        insertar_flujos(df)
+        print("Datos de respaldo cargados.")
