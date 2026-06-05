@@ -1,0 +1,45 @@
+[
+    {
+        "nombre": "XM Generación Eléctrica",
+        "url": "https://www.xm.com.co/consumo/datos-abiertos",
+        "tipo": "csv",
+        "activo": 1,
+        "reglas_extraccion": {
+            "col_origen": "Tecnologia",
+            "col_destino": "Destino",
+            "col_valor": "Generacion_GWh",
+            "factor_conversion": 3.6,
+            "periodo": "2024",
+            "nombre_fuente": "XM"
+        }
+    },
+    {
+        "nombre": "UPME Balance Energético",
+        "url": "https://www1.upme.gov.co/DemandayEficiencia/Documents/BECO/BECO_2024.xlsx",
+        "tipo": "excel",
+        "activo": 1,
+        "reglas_extraccion": {
+            "hoja": "Flujos",
+            "col_origen": "Origen",
+            "col_destino": "Destino",
+            "col_valor": "Valor_TJ",
+            "factor_conversion": 1.0,
+            "periodo": "2024",
+            "nombre_fuente": "UPME"
+        }
+    },
+    {
+        "nombre": "ANH Producción",
+        "url": "https://www.anh.gov.co/estadisticas-del-sector",
+        "tipo": "excel",
+        "activo": 0,
+        "reglas_extraccion": {
+            "col_origen": "Tipo_Hidrocarburo",
+            "col_destino": "Uso",
+            "col_valor": "Produccion",
+            "factor_conversion": 1.0,
+            "periodo": "2024",
+            "nombre_fuente": "ANH"
+        }
+    }
+]
