@@ -11,7 +11,6 @@ build/
 *.spec
 .env
 SankeyColombia.zip
-dist/
-SankeyColombia.zip
-dist/
-SankeyColombia.zip
+.coverage
+.exe
+htmlcov/

@@ -26,7 +26,7 @@ Esta aplicación permite extraer, almacenar y visualizar los flujos energéticos
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tuusuario/sankey-automatizacion.git
+git clone https://github.com/IngCarlosRubiano/sankey-automatizacion.git
 cd sankey-automatizacion
 
 # Crear y activar entorno virtual (Windows)
